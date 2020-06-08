@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   button: {
     textAlign: "right",
     margin: theme.spacing(1),
-    display: "block"
+    display: "block",
   },
   inline: {
     display: "inline",
@@ -50,14 +50,14 @@ function Saved() {
   const classes = useStyles();
   const [bookInfo, setBookInfo] = useState([]);
 
-  useEffect(() => {
-    loadSavedBooks()
-  }, [])
- 
-
+  useEffect((id) => {
+    loadSavedBooks();
+    API.deleteBook(id)
+      .then(loadSavedBooks())
+      .catch((err) => console.log(err));
+  }, []);
 
   function loadSavedBooks() {
-
     API.getSavedBooks()
       .then((res) => {
         setBookInfo(res.data);
@@ -66,19 +66,17 @@ function Saved() {
   }
 
   function handleDelete(event, id) {
-      event.preventDefault();
-    
-    API.deleteBook(id)
-    .then(loadSavedBooks())
-    .catch(err=> console.log(err))
-    
+    event.preventDefault();
 
+    API.deleteBook(id)
+      .then(loadSavedBooks())
+      .catch((err) => console.log(err));
   }
 
   return (
     <Grid>
       <Banner />
-     
+
       <Grid container justify="center" className={classes.root}>
         <Paper className={classes.paper}>
           <h3>Saved Books</h3>
@@ -121,7 +119,13 @@ function Saved() {
                             className={classes.inline}
                             color="textPrimary"
                           >
-                            {list.authors}
+                            {[list.authors].map((res, i) =>
+                              res ? (
+                                <h5> {res[i]} </h5>
+                              ) : (
+                                <h5>Author is not available</h5>
+                              )
+                            )}
                           </Typography>
 
                           <Divider />

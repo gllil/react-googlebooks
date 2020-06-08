@@ -97,15 +97,19 @@ function Search() {
     //    books[num]=value
     console.log(num);
 
-    setSaved({
+    const selectedBook = {
       title: books[num].volumeInfo.title,
       description: books[num].volumeInfo.description,
       image: books[num].volumeInfo.imageLinks.thumbnail,
       link: books[num].volumeInfo.infoLink,
       authors: books[num].volumeInfo.authors,
+    };
+    console.log(selectedBook);
+
+    API.saveBook(selectedBook).then(({ data }) => {
+      setSaved(data);
+      setOpen(true);
     });
-    console.log(saved);
-    API.saveBook(saved).then(() => setOpen(true));
   }
 
   return (
@@ -195,7 +199,13 @@ function Search() {
                             className={classes.inline}
                             color="textPrimary"
                           >
-                            {list.volumeInfo.authors}
+                            {[list.volumeInfo.authors].map((res, i) =>
+                              res ? (
+                                <h5> {res[i]} </h5>
+                              ) : (
+                                <h5>Author is not available</h5>
+                              )
+                            )}
                           </Typography>
 
                           <Divider />
